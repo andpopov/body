@@ -79,7 +79,7 @@ public class AppUI extends UI {
     	form.setMargin(true);
 
     	Label errorLabel = new Label("");
-    	errorLabel.setVisible(true);
+    	errorLabel.setVisible(false);
     	form.addComponent(errorLabel);
     	
     	TextField emailField = new TextField("Email");
