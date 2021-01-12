@@ -18,6 +18,7 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Button.ClickEvent;
+import com.bodymass.app.Functions;
 
 /**
  * This UI is the application entry point. A UI may either represent a browser window 
@@ -52,20 +53,42 @@ public class AppUI extends UI {
 		passwordField.setRequiredIndicatorVisible(true);
 		form.addComponent(passwordField);
 
+		TextField secondPasswordField = new TextField("Подтвердите пароль");
+		secondPasswordField.setRequiredIndicatorVisible(true);
+		form.addComponent(secondPasswordField);
+
 		Button saveButton = new Button("Зарегистрироваться");
 		saveButton.addClickListener(e -> {
-			int isErr = -1;
+			String isErr = "undefined";
 			try {
-				isErr = userService.register(emailField.getValue(), passwordField.getValue());
+				isErr = userService.register(emailField.getValue(), passwordField.getValue(), secondPasswordField.getValue());
 			} catch (SQLException e1) {
 				e1.printStackTrace();
 			}
-			if(isErr < 0) {
+			errorLabel.setVisible(true);
+			if(isErr.equalsIgnoreCase("empty email")) {
+				errorLabel.setValue("Email не должен быть пустым");
+			}
+			else if(isErr.equalsIgnoreCase("empty password")) {
+				errorLabel.setValue("Пароль не должен быть пустым");
+			}
+			else if(isErr.equalsIgnoreCase("password mismatch")) {
+				errorLabel.setValue("Пароли не совпадают");
+			}
+			else if(isErr.equalsIgnoreCase("incorrect email")) {
+				errorLabel.setValue("Введён некорректный Email");
+			}
+			else if(isErr.equalsIgnoreCase("registered already")) {
+				errorLabel.setValue("Данный пользователь уже зарегистрирован");
+			}
+			else if(isErr.equalsIgnoreCase("error")) {
 				errorLabel.setValue("Ошибка регистрации");
-				errorLabel.setVisible(true);
-			} else {
-				errorLabel.setValue("Вы зарегистрированы");
-				errorLabel.setVisible(true);
+			}
+			else if(isErr.equalsIgnoreCase("undefined")) {
+				errorLabel.setValue("Ошибка регистрации");
+			}
+			else if(isErr.equalsIgnoreCase("successful")) {
+				errorLabel.setValue("Вы успешно зарегистрированы");
 			}
 		});
 		form.addComponent(saveButton);

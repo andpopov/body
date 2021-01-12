@@ -1,6 +1,8 @@
 package com.bodymass.app;
 
 import java.sql.SQLException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.bodymass.app.data.User;
 import com.bodymass.app.data.UserDAOTools;
@@ -8,9 +10,36 @@ import com.bodymass.app.data.UserDAOTools;
 public class UserService {
 	private UserDAOTools userDAO = new UserDAOTools();
 	
-	public int register(String email, String password) throws SQLException {
-		int result = userDAO.addUser(new User(email, password));
-		return result;
+	public String register(String email, String password, String secondPassword) throws SQLException {
+		if(email.equals("")){
+			return "empty email";
+		}
+		String regex = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(email);
+		System.out.println(matcher.matches());
+		if(matcher.matches() == false) {
+			return "incorrect email";
+		}
+		else if(password.trim().equals("") || secondPassword.trim().equals("")) {
+			return "empty password";
+		}
+		else if(!password.equals(secondPassword)) {
+			return "password mismatch";
+		}
+		else {
+			boolean userAlreadyExists = userDAO.ifUserExistsByEmail(email);
+			if(userAlreadyExists){
+				return "registered already";
+			}
+			int result = userDAO.addUser(new User(email, password));
+			if (result == 0) {
+				return "successful";
+			} else if (result == -1) {
+				return "error";
+			}
+		}
+		return "undefined";
 	}
 
 	public int login(String email, String password) throws SQLException {
@@ -25,9 +54,9 @@ public class UserService {
 		}
 	}
 	
-	public static void main(String[] args) throws SQLException {
+	/*public static void main(String[] args) throws SQLException {
 		UserService service = new UserService();
-		service.register("11111", "111");
+		//service.register("11111", "111");
 		System.out.println("Ok");
-	}
+	}*/
 }
