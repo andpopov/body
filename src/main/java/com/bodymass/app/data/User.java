@@ -1,4 +1,4 @@
-package com.bodymass.app;
+package com.bodymass.app.data;
 
 public class User {
 	private long id;

@@ -1,6 +1,7 @@
 package com.bodymass.app;
 
 import com.bodymass.app.UserDAOImpl;
+import com.bodymass.app.data.User;
 
 public class UserService {
 	private UserDAO userDAO = new UserDAOImpl();

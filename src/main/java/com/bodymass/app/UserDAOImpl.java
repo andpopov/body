@@ -3,6 +3,8 @@ package com.bodymass.app;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.bodymass.app.data.User;
+
 public class UserDAOImpl implements UserDAO {
 	private long userId;
 	private List<User> users = new ArrayList<>();
