@@ -10,6 +10,15 @@ import java.util.ArrayList;
 import java.util.List; 
 
 public class UserDAOTools {
+	static {
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+	}
+
 	private String url = "jdbc:mysql://192.168.1.72/mydb?" + "useUnicode=true&serverTimezone=UTC" + "&user=root2&password=root2";
 
 	public Connection getConnection() throws SQLException {
