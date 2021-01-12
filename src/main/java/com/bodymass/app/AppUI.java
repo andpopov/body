@@ -1,5 +1,7 @@
 package com.bodymass.app;
 
+import java.sql.SQLException;
+
 import javax.servlet.annotation.WebServlet;
 
 import com.vaadin.annotations.Theme;
@@ -31,7 +33,7 @@ public class AppUI extends UI {
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
-    	setContent(createRegistrationPanel());
+		setContent(createRegistrationPanel());
     }
 
     private VerticalLayout createRegistrationPanel() {
@@ -52,8 +54,13 @@ public class AppUI extends UI {
 
     	Button saveButton = new Button("Зарегистрироваться");
     	saveButton.addClickListener(e -> {
-    		long id = userService.register(emailField.getValue(), passwordField.getValue());
-    		if(id <= 0) {
+    		int isErr = -1;
+			try {
+				isErr = userService.register(emailField.getValue(), passwordField.getValue());
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+    		if(isErr < 0) {
     			errorLabel.setValue("Ошибка регистрации");
     			errorLabel.setVisible(true);
     		} else {
@@ -92,8 +99,13 @@ public class AppUI extends UI {
 
     	Button saveButton = new Button("Войти");
     	saveButton.addClickListener(e -> {
-    		long id = userService.login(emailField.getValue(), passwordField.getValue());
-    		if(id <= 0) {
+    		int isErr = -1;
+			try {
+				isErr = userService.login(emailField.getValue(), passwordField.getValue());
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+    		if(isErr < 0) {
     			errorLabel.setValue("Ошибка входа");
     			errorLabel.setVisible(true);
     		} else {

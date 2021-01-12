@@ -1,9 +1,0 @@
-package com.bodymass.app;
-
-import com.bodymass.app.data.User;
-
-public interface UserDAO {
-	public User findUser(String email, String password);
-	
-	public User addUser(String email, String password);
-}

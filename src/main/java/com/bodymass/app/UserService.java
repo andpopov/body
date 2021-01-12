@@ -1,26 +1,24 @@
 package com.bodymass.app;
 
-import com.bodymass.app.UserDAOImpl;
+import java.sql.SQLException;
+
 import com.bodymass.app.data.User;
+import com.bodymass.app.data.UserDAOTools;
 
 public class UserService {
-	private UserDAO userDAO = new UserDAOImpl();
+	private UserDAOTools userDAO = new UserDAOTools();
 	
-	public Long register(String email, String password) {
-		User user = userDAO.addUser(email, password);
-		if(user != null) {
-			return user.getId();
-		} else {
-			return -1L;
-		}
+	public int register(String email, String password) throws SQLException {
+		int result = userDAO.addUser(new User(email, password));
+		return result;
 	}
 
-	public Long login(String email, String password) {
+	public int login(String email, String password) throws SQLException {
 		User user = userDAO.findUser(email, password);
 		if(user != null) {
-			return user.getId();
+			return 0;
 		} else {
-			return -1L;
+			return -1;
 		}
 	}
 }

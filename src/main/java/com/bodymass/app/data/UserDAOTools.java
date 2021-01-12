@@ -7,7 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.List; 
 
 public class UserDAOTools {
 	private String url = "jdbc:mysql://localhost/mydb?" + "useUnicode=true&serverTimezone=UTC" + "&user=root&password=12345";
@@ -55,14 +55,13 @@ public class UserDAOTools {
 		return result;
 	}
 	
-	public void addUser(User user) throws SQLException {
+	public int addUser(User user) throws SQLException {
 		Connection conn = getConnection();
 
 		PreparedStatement preparedStatement = conn
-				.prepareStatement("INSERT INTO users(id, email, password) VALUES(?, ?, ?)");
-		preparedStatement.setLong(1, user.getId());
-		preparedStatement.setString(2, user.getEmail());
-		preparedStatement.setString(3, user.getPassword());
+				.prepareStatement("INSERT INTO users(email, password) VALUES(?, ?)");
+		preparedStatement.setString(1, user.getEmail());
+		preparedStatement.setString(2, user.getPassword());
 		int row = preparedStatement.executeUpdate();
 
 		if (preparedStatement != null) {
@@ -78,6 +77,7 @@ public class UserDAOTools {
 			} catch (SQLException sqlEx) {
 			} // ignore
 		}
+		return 0;
 	}
 	
 	public void deleteUsers(User user) throws SQLException {
@@ -105,10 +105,9 @@ public class UserDAOTools {
 	public void updateUsers(User user) throws SQLException {
 		Connection conn = getConnection();
 
-		PreparedStatement preparedStatement = conn.prepareStatement("UPDATE users SET id=?, email=? where password=?");
-		preparedStatement.setLong(1, user.getId());
-		preparedStatement.setString(2, user.getEmail());
-		preparedStatement.setString(3, user.getPassword());		
+		PreparedStatement preparedStatement = conn.prepareStatement("UPDATE users SET password=? where email=?");
+		preparedStatement.setString(1, user.getPassword());
+		preparedStatement.setString(2, user.getEmail());		
 		int row = preparedStatement.executeUpdate();
 
 		if (preparedStatement != null) {
@@ -134,12 +133,11 @@ public class UserDAOTools {
 		preparedStatement.setString(1, email);
 		preparedStatement.setString(2, password);
 
-		ResultSet rs = preparedStatement.executeQuery("SELECT email, password FROM users WHERE id=?");
+		ResultSet rs = preparedStatement.executeQuery();
 		if (rs.next()) {
 			int id = rs.getInt("id");
 			String newEmail = rs.getString("email");
 			String newPassword = rs.getString("password");
-
 			return new User(id, newEmail, newPassword);
 		}
 
