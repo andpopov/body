@@ -134,11 +134,13 @@ public class UserDAOTools {
 		preparedStatement.setString(2, password);
 
 		ResultSet rs = preparedStatement.executeQuery();
+		int id = 0;
+		String newEmail = "";
+		String newPassword = "";
 		if (rs.next()) {
-			int id = rs.getInt("id");
-			String newEmail = rs.getString("email");
-			String newPassword = rs.getString("password");
-			return new User(id, newEmail, newPassword);
+			id = rs.getInt("id");
+			newEmail = rs.getString("email");
+			newPassword = rs.getString("password");
 		}
 
 		if (rs != null) {
@@ -161,6 +163,42 @@ public class UserDAOTools {
 			} catch (SQLException sqlEx) {
 			} // ignore
 		}
-		return null;
+		return new User(id, newEmail, newPassword);
+	}
+	
+	public boolean ifUserExistsByEmail(String email) throws SQLException {
+
+		Connection conn = getConnection();
+
+		PreparedStatement preparedStatement = conn.prepareStatement("SELECT id FROM users WHERE email=?");
+		preparedStatement.setString(1, email);
+
+		ResultSet rs = preparedStatement.executeQuery();
+		boolean result = false;  
+		if (rs.next()) {
+			result = true;
+		}
+
+		if (rs != null) {
+			try {
+				rs.close();
+			} catch (SQLException sqlEx) {
+			} // ignore
+		}
+
+		if (preparedStatement != null) {
+			try {
+				preparedStatement.close();
+			} catch (SQLException sqlEx) {
+			} // ignore
+		}
+
+		if (conn != null) {
+			try {
+				conn.close();
+			} catch (SQLException sqlEx) {
+			} // ignore
+		}
+		return result;
 	}
 }
