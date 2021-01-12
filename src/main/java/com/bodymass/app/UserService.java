@@ -4,6 +4,7 @@ import java.sql.SQLException;
 
 import com.bodymass.app.data.User;
 import com.bodymass.app.data.UserDAOTools;
+import com.mysql.cj.jdbc.Driver;
 
 public class UserService {
 	private UserDAOTools userDAO = new UserDAOTools();
@@ -20,5 +21,10 @@ public class UserService {
 		} else {
 			return -1;
 		}
+	}
+	
+	public static void main(String[] args) throws SQLException {
+		new UserService().register("", "");
+		System.out.println(111);
 	}
 }

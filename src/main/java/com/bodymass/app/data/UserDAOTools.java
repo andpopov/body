@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List; 
 
 public class UserDAOTools {
-	private String url = "jdbc:mysql://localhost/mydb?" + "useUnicode=true&serverTimezone=UTC" + "&user=root&password=12345";
+	private String url = "jdbc:mysql://192.168.1.72/mydb?" + "useUnicode=true&serverTimezone=UTC" + "&user=root2&password=root2";
 
 	public Connection getConnection() throws SQLException {
 		Connection conn = DriverManager.getConnection(url);
