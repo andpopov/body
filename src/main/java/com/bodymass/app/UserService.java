@@ -14,12 +14,11 @@ public class UserService {
 		if(email.equals("")){
 			return "empty email";
 		}
-		String regex = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
-		Pattern pattern = Pattern.compile(regex);
-		Matcher matcher = pattern.matcher(email);
-		System.out.println(matcher.matches());
-		if(matcher.matches() == false) {
+		else if(checkValidEmail(email) == false) {
 			return "incorrect email";
+		}
+		if(userDAO.ifUserExistsByEmail(email)){
+			return "registered already";
 		}
 		else if(password.trim().equals("") || secondPassword.trim().equals("")) {
 			return "empty password";
@@ -28,10 +27,6 @@ public class UserService {
 			return "password mismatch";
 		}
 		else {
-			boolean userAlreadyExists = userDAO.ifUserExistsByEmail(email);
-			if(userAlreadyExists){
-				return "registered already";
-			}
 			int result = userDAO.addUser(new User(email, password));
 			if (result == 0) {
 				return "successful";
@@ -42,15 +37,27 @@ public class UserService {
 		return "undefined";
 	}
 
-	public int login(String email, String password) throws SQLException {
+	public String login(String email, String password) throws SQLException {
 		User user = userDAO.findUser(email, password);
-		if(user!=null && user.getId()==0) {
-			return 1;
+		if(email.trim().equals("")){
+			return "empty email";
+		}
+		else if(checkValidEmail(email) == false) {
+			return "incorrect email";
+		}
+		if(password.trim().equals("")){
+			return "empty password";
+		}
+		if(userDAO.ifUserExistsByEmail(email) == false){
+			return "no such user";
+		}
+		else if(user!=null && user.getId()==0) {
+			return "wrong password";
 		}
 		else if(user != null) {
-			return 0;
+			return "successful";
 		} else {
-			return -1;
+			return "error";
 		}
 	}
 	
@@ -59,4 +66,11 @@ public class UserService {
 		//service.register("11111", "111");
 		System.out.println("Ok");
 	}*/
+
+	public boolean checkValidEmail(String email){
+		String regex = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(email);
+		return matcher.matches();
+	}
 }

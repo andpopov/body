@@ -27,10 +27,13 @@ import com.bodymass.app.Functions;
  * The UI is initialized using {@link #init(VaadinRequest)}. This method is intended to be 
  * overridden to add component to the user interface and initialize non-component functionality.
  */
-@Title("My UI")
+@Title("Weight")
 @Theme("mytheme")
 public class AppUI extends UI {
+    //private HorizontalLayout content = new HorizontalLayout();
 	private UserService userService = new UserService();
+	private Button loginButton;
+	private Button registrationButton;
 
 	@Override
 	protected void init(VaadinRequest vaadinRequest) {
@@ -89,6 +92,8 @@ public class AppUI extends UI {
 			}
 			else if(isErr.equalsIgnoreCase("successful")) {
 				errorLabel.setValue("Вы успешно зарегистрированы");
+				//setContent(createLoginPanel());
+				setContent(createAfterAuthPanel());
 			}
 		});
 		form.addComponent(saveButton);
@@ -122,22 +127,34 @@ public class AppUI extends UI {
 
 		Button saveButton = new Button("Войти");
 		saveButton.addClickListener(e -> {
-			int isErr = -1;
+			String isErr = "";
 			try {
 				isErr = userService.login(emailField.getValue(), passwordField.getValue());
 			} catch (SQLException e1) {
 				e1.printStackTrace();
 			}
-			if(isErr < 0) {
+			errorLabel.setVisible(true);
+			if(isErr.equalsIgnoreCase("error")) {
 				errorLabel.setValue("Ошибка входа");
-				errorLabel.setVisible(true);
-			} else if(isErr == 0) {
-				errorLabel.setValue("Вы вошли");
-				errorLabel.setVisible(true);
 			}
-			else if(isErr == 1) {
+			else if(isErr.equalsIgnoreCase("successful")) {
+				errorLabel.setValue("Вы вошли");
+				setContent(createAfterAuthPanel());
+			}
+			else if(isErr.equalsIgnoreCase("no such user")) {
+				errorLabel.setValue("Данного пользователя не существует");
+			}
+			else if(isErr.equalsIgnoreCase("wrong password")) {
 				errorLabel.setValue("Неверный пароль");
-				errorLabel.setVisible(true);
+			}
+			else if(isErr.equalsIgnoreCase("empty email")) {
+				errorLabel.setValue("Email не должен быть пустым");
+			}
+			else if(isErr.equalsIgnoreCase("empty password")) {
+				errorLabel.setValue("Пароль не должен быть пустым");
+			}
+			else if(isErr.equalsIgnoreCase("incorrect email")) {
+				errorLabel.setValue("Введён некорректный Email");
 			}
 		});
 		form.addComponent(saveButton);
@@ -156,13 +173,60 @@ public class AppUI extends UI {
 	private HorizontalLayout createMenu() {
 		HorizontalLayout content = new HorizontalLayout();
 
-		Button loginButton = new Button("Войти");
+		loginButton = new Button("Войти");
 		loginButton.addClickListener(e -> setContent(createLoginPanel()));
 		content.addComponent(loginButton);
 
-		Button registrationButton = new Button("Регистрация");
+		registrationButton = new Button("Регистрация");
 		registrationButton.addClickListener(e -> setContent(createRegistrationPanel()));
 		content.addComponent(registrationButton);
+
+		return content;
+	}
+
+	private VerticalLayout createAfterAuthPanel() {
+		loginButton.setVisible(false);
+		registrationButton.setVisible(false);
+
+		//setContent(new Panel());
+
+		FormLayout form = new FormLayout();
+		form.setMargin(true);
+
+		Label errorLabel = new Label("");
+		errorLabel.setVisible(false);
+
+		TextField emailField = new TextField("Вес в прошлый раз");
+		emailField.setRequiredIndicatorVisible(false);
+		form.addComponent(emailField);
+
+		TextField passwordField = new TextField("Вес сегодня");
+		passwordField.setRequiredIndicatorVisible(false);
+		form.addComponent(passwordField);
+
+		Button saveButton = new Button("Подтвердить");
+		saveButton.addClickListener(e -> {
+			errorLabel.setValue("Данные успешно отправленны (fake message)");
+			errorLabel.setVisible(true);
+		});
+		form.addComponent(saveButton);
+
+		VerticalLayout VLayout = new VerticalLayout();
+		Panel announcementField = new Panel("");
+		VLayout.addComponent(announcementField);
+		VLayout.addComponent(form);
+		VLayout.addComponent(errorLabel);
+
+		Panel panel = new Panel("Ввести вес");
+		panel.setSizeUndefined();
+		panel.setContent(VLayout);
+
+		VerticalLayout content = new VerticalLayout();
+		content.addComponent(createMenu());
+		content.addComponent(announcementField);
+		content.addComponent(panel);
+
+		announcementField.setContent(new Label("Вы не вводили данные вчера! (fake message)"));
 
 		return content;
 	}
