@@ -60,6 +60,11 @@ public class UserService {
 			return "error";
 		}
 	}
+
+	public User getUser(String email, String password) throws SQLException {
+		User user = userDAO.findUser(email, password);
+		return user;
+	}
 	
 	/*public static void main(String[] args) throws SQLException {
 		UserService service = new UserService();

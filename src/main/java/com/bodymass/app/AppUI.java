@@ -4,6 +4,7 @@ import java.sql.SQLException;
 
 import javax.servlet.annotation.WebServlet;
 
+import com.bodymass.app.data.User;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.annotations.VaadinServletConfiguration;
@@ -155,6 +156,13 @@ public class AppUI extends UI {
 			}
 			else if(isErr.equalsIgnoreCase("incorrect email")) {
 				errorLabel.setValue("Введён некорректный Email");
+			} else {
+				try {
+					User user = userService.getUser(emailField.getValue(), passwordField.getValue());
+					UserState.get().setUser(user);
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
 			}
 		});
 		form.addComponent(saveButton);
