@@ -141,8 +141,8 @@ public class UserDAOTools {
 		Connection conn = getConnection();
 
 		PreparedStatement preparedStatement = conn.prepareStatement("SELECT id, email, password FROM users WHERE email=? and password=?");
-		preparedStatement.setString(1, email);
-		preparedStatement.setString(2, password);
+		preparedStatement.setString(1, Crypter.encode(email));
+		preparedStatement.setString(2, Crypter.encode(password));
 
 		ResultSet rs = preparedStatement.executeQuery();
 		int id = 0;
